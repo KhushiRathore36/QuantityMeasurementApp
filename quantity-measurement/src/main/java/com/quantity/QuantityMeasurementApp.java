@@ -1,74 +1,89 @@
 package com.quantity;
 
 public class QuantityMeasurementApp {
-	public static class Feet {
+	
+     public enum LengthUnit {
 
-        private final double value;
+          FEET(1.0),
+          INCH(1.0 / 12.0);   
 
-        public Feet(double value) {
-            this.value = value;
-        }
+          private final double conversionFactorToFeet;
 
-        @Override
-        public boolean equals(Object obj) {
+          LengthUnit(double conversionFactorToFeet) {
+               this.conversionFactorToFeet = conversionFactorToFeet;
+          }
 
-            if (this == obj) return true;
+          public double toFeet(double value) {
+              return value * conversionFactorToFeet;
+          }
+     }
 
-            if (obj == null || getClass() != obj.getClass()) return false;
+     public static class QuantityLength {
 
-            Feet other = (Feet) obj;
+         private final double value;
+         private final LengthUnit unit;
 
-            return Double.compare(this.value, other.value) == 0;
-        }
+         public QuantityLength(double value, LengthUnit unit) {
 
-        @Override
-        public int hashCode() {
-            return Double.hashCode(value);
-        }
-    }
-    public static class Inches {
+             if (unit == null) {
+                 throw new IllegalArgumentException("Unit cannot be null");
+             }
 
-        private final double value;
+             this.value = value;
+             this.unit = unit;
+         }
 
-        public Inches(double value) {
-            this.value = value;
-        }
+         public double getValueInFeet() {
+             return unit.toFeet(value);
+         }
 
-        @Override
-        public boolean equals(Object obj) {
+         @Override
+         public boolean equals(Object obj) {
 
-            if (this == obj) return true;
+             if (this == obj) return true;
 
-            if (obj == null || getClass() != obj.getClass()) return false;
+             if (obj == null || getClass() != obj.getClass()) return false;
 
-            Inches other = (Inches) obj;
+             QuantityLength other = (QuantityLength) obj;
 
-            return Double.compare(this.value, other.value) == 0;
-        }
+             return Double.compare(
+                     this.getValueInFeet(),
+                     other.getValueInFeet()
+             ) == 0;
+         }
 
-        @Override
-        public int hashCode() {
-            return Double.hashCode(value);
-        }
-    }
-    public static boolean compareFeet(double value1, double value2) {
-        Feet f1 = new Feet(value1);
-        Feet f2 = new Feet(value2);
-        return f1.equals(f2);
-    }
+         @Override
+         public int hashCode() {
+             return Double.hashCode(getValueInFeet());
+         }
 
-    public static boolean compareInches(double value1, double value2) {
-        Inches i1 = new Inches(value1);
-        Inches i2 = new Inches(value2);
-        return i1.equals(i2);
-    }
-    public static void main(String[] args) {
+         @Override
+         public String toString() {
+             return "Quantity(" + value + ", " + unit + ")";
+         }
+     }
 
-        System.out.println("Input: 1.0 inch and 1.0 inch");
-        System.out.println("Output: Equal (" + compareInches(1.0, 1.0) + ")");
 
-        System.out.println("Input: 1.0 ft and 1.0 ft");
-        System.out.println("Output: Equal (" + compareFeet(1.0, 1.0) + ")");
-    }
+     
+     public static void main(String[] args) {
+
+         QuantityLength q1 =
+                 new QuantityLength(1.0, LengthUnit.FEET);
+
+         QuantityLength q2 =
+                 new QuantityLength(12.0, LengthUnit.INCH);
+
+         System.out.println("Input: " + q1 + " and " + q2);
+         System.out.println("Output: Equal (" + q1.equals(q2) + ")");
+
+         QuantityLength q3 =
+                 new QuantityLength(1.0, LengthUnit.INCH);
+
+         QuantityLength q4 =
+                 new QuantityLength(1.0, LengthUnit.INCH);
+
+         System.out.println("Input: " + q3 + " and " + q4);
+         System.out.println("Output: Equal (" + q3.equals(q4) + ")");
+     }
 
 }
