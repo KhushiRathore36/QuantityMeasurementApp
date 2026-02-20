@@ -2,88 +2,76 @@ package com.quantity;
 
 public class QuantityMeasurementApp {
 	
-     public enum LengthUnit {
+	public enum LengthUnit {
 
-          FEET(1.0),
-          INCH(1.0 / 12.0);   
+	     FEET(1.0),
+	     INCH(1.0 / 12.0),                 
+	     YARDS(3.0),                       
+	     CENTIMETERS(0.393701 / 12.0);    
 
-          private final double conversionFactorToFeet;
+	     private final double conversionFactorToFeet;
 
-          LengthUnit(double conversionFactorToFeet) {
-               this.conversionFactorToFeet = conversionFactorToFeet;
-          }
+	     LengthUnit(double conversionFactorToFeet) {
+	         this.conversionFactorToFeet = conversionFactorToFeet;
+	     }
 
-          public double toFeet(double value) {
-              return value * conversionFactorToFeet;
-          }
-     }
+	     public double toFeet(double value) {
+	         return value * conversionFactorToFeet;
+	     }
+	 }
 
-     public static class QuantityLength {
+	 public static class QuantityLength {
 
-         private final double value;
-         private final LengthUnit unit;
+	     private final double value;
+	     private final LengthUnit unit;
 
-         public QuantityLength(double value, LengthUnit unit) {
+	     public QuantityLength(double value, LengthUnit unit) {
+	         if (unit == null) {
+	             throw new IllegalArgumentException("Unit cannot be null");
+	         }
+	         this.value = value;
+	         this.unit = unit;
+	     }
 
-             if (unit == null) {
-                 throw new IllegalArgumentException("Unit cannot be null");
-             }
+	     public double getValueInFeet() {
+	         return unit.toFeet(value);
+	     }
 
-             this.value = value;
-             this.unit = unit;
-         }
+	     @Override
+	     public boolean equals(Object obj) {
 
-         public double getValueInFeet() {
-             return unit.toFeet(value);
-         }
+	         if (this == obj) return true;
+	         if (obj == null || getClass() != obj.getClass()) return false;
 
-         @Override
-         public boolean equals(Object obj) {
+	         QuantityLength other = (QuantityLength) obj;
 
-             if (this == obj) return true;
+	         return Double.compare(
+	                 this.getValueInFeet(),
+	                 other.getValueInFeet()
+	         ) == 0;
+	     }
 
-             if (obj == null || getClass() != obj.getClass()) return false;
+	     @Override
+	     public int hashCode() {
+	         return Double.hashCode(getValueInFeet());
+	     }
 
-             QuantityLength other = (QuantityLength) obj;
+	     @Override
+	     public String toString() {
+	         return "Quantity(" + value + ", " + unit + ")";
+	     }
+	 }
 
-             return Double.compare(
-                     this.getValueInFeet(),
-                     other.getValueInFeet()
-             ) == 0;
-         }
+	 public static void main(String[] args) {
 
-         @Override
-         public int hashCode() {
-             return Double.hashCode(getValueInFeet());
-         }
+	     QuantityLength q1 =
+	             new QuantityLength(1.0, LengthUnit.YARDS);
 
-         @Override
-         public String toString() {
-             return "Quantity(" + value + ", " + unit + ")";
-         }
-     }
+	     QuantityLength q2 =
+	             new QuantityLength(3.0, LengthUnit.FEET);
 
-
-     
-     public static void main(String[] args) {
-
-         QuantityLength q1 =
-                 new QuantityLength(1.0, LengthUnit.FEET);
-
-         QuantityLength q2 =
-                 new QuantityLength(12.0, LengthUnit.INCH);
-
-         System.out.println("Input: " + q1 + " and " + q2);
-         System.out.println("Output: Equal (" + q1.equals(q2) + ")");
-
-         QuantityLength q3 =
-                 new QuantityLength(1.0, LengthUnit.INCH);
-
-         QuantityLength q4 =
-                 new QuantityLength(1.0, LengthUnit.INCH);
-
-         System.out.println("Input: " + q3 + " and " + q4);
-         System.out.println("Output: Equal (" + q3.equals(q4) + ")");
-     }
+	     System.out.println("Input: " + q1 + " and " + q2);
+	     System.out.println("Output: Equal (" + q1.equals(q2) + ")");
+	 }
 
 }
