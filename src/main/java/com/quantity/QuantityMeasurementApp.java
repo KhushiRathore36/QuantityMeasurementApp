@@ -4,34 +4,24 @@ public class QuantityMeasurementApp {
 	
 	public static void main(String[] args) {
 
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
+        // Length Example
+        QuantityLength length1 = new QuantityLength(1, LengthUnit.FEET);
+        QuantityLength length2 = new QuantityLength(12, LengthUnit.INCH);
 
-        QuantityLength converted =
-                q1.convertTo(LengthUnit.INCHES);
+        System.out.println("1 ft == 12 inch : " + length1.equals(length2));
 
-        System.out.println("Convert: " + converted);
+        QuantityLength sum = length1.add(length2, LengthUnit.FEET);
+        System.out.println("Sum in feet : " + sum);
 
-        QuantityLength q2 =
-                new QuantityLength(12.0, LengthUnit.INCHES);
 
-        QuantityLength sum =
-                q1.add(q2, LengthUnit.FEET);
+        // Weight Example
+        QuantityWeight weight1 = new QuantityWeight(1, WeightUnit.KILOGRAM);
+        QuantityWeight weight2 = new QuantityWeight(1000, WeightUnit.GRAM);
 
-        System.out.println("Addition: " + sum);
+        System.out.println("1 kg == 1000 gram : " + weight1.equals(weight2));
 
-        QuantityLength q3 =
-                new QuantityLength(36.0, LengthUnit.INCHES);
-
-        QuantityLength q4 =
-                new QuantityLength(1.0, LengthUnit.YARDS);
-
-        System.out.println("Equality: " + q3.equals(q4));
-
-        QuantityLength q5 =
-                new QuantityLength(2.54, LengthUnit.CENTIMETERS);
-
-        System.out.println("CM to Inches: " +
-                q5.convertTo(LengthUnit.INCHES));
+        QuantityWeight weightSum = weight1.add(weight2, WeightUnit.KILOGRAM);
+        System.out.println("Weight Sum : " + weightSum);
     }
 
 }

@@ -1,13 +1,12 @@
 package com.quantity;
 
-public enum LengthUnit {
-	FEET(12),
-    INCH(1),
-    YARD(36);
+public enum WeightUnit {
+	GRAM(1),
+    KILOGRAM(1000);
 
     private final double conversionFactor;
 
-    LengthUnit(double conversionFactor) {
+    WeightUnit(double conversionFactor) {
         this.conversionFactor = conversionFactor;
     }
 
