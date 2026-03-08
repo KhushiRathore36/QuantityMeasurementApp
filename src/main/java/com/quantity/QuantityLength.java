@@ -3,6 +3,7 @@ import java.util.Objects;
 public final class QuantityLength {
 	private final double value;
     private final LengthUnit unit;
+    private static final double EPSILON = 0.0001;
 
     public QuantityLength(double value, LengthUnit unit) {
 
@@ -10,7 +11,7 @@ public final class QuantityLength {
             throw new IllegalArgumentException("Unit cannot be null");
 
         if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Invalid numeric value");
+            throw new IllegalArgumentException("Invalid value");
 
         this.value = value;
         this.unit = unit;
@@ -24,51 +25,33 @@ public final class QuantityLength {
         return unit;
     }
 
-    public double toFeet() {
-        return unit.toFeet(value);
+    // Convert this quantity to another unit
+    public QuantityLength convertTo(LengthUnit targetUnit) {
+
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+
+        double base = unit.convertToBaseUnit(value);
+        double result = targetUnit.convertFromBaseUnit(base);
+
+        return new QuantityLength(result, targetUnit);
     }
 
-    public static double convert(double value, LengthUnit from, LengthUnit to) {
-
-        if (from == null || to == null)
-            throw new IllegalArgumentException("Unit cannot be null");
-
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Invalid value");
-
-        double feet = from.toFeet(value);
-        return to.fromFeet(feet);
-    }
-
-    /* UC6 Addition (default unit = first operand) */
-    public QuantityLength add(QuantityLength other) {
+    // UC7 style addition with target unit
+    public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
 
         if (other == null)
-            throw new IllegalArgumentException("Operand cannot be null");
-
-        double totalFeet = this.toFeet() + other.toFeet();
-
-        double result = unit.fromFeet(totalFeet);
-
-        return new QuantityLength(result, unit);
-    }
-
-    /* UC7 Addition with explicit target unit */
-
-    public static QuantityLength add(
-            QuantityLength q1,
-            QuantityLength q2,
-            LengthUnit targetUnit) {
-
-        if (q1 == null || q2 == null)
             throw new IllegalArgumentException("Quantity cannot be null");
 
         if (targetUnit == null)
             throw new IllegalArgumentException("Target unit cannot be null");
 
-        double totalFeet = q1.toFeet() + q2.toFeet();
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
 
-        double result = targetUnit.fromFeet(totalFeet);
+        double sum = base1 + base2;
+
+        double result = targetUnit.convertFromBaseUnit(sum);
 
         return new QuantityLength(result, targetUnit);
     }
@@ -84,14 +67,15 @@ public final class QuantityLength {
 
         QuantityLength other = (QuantityLength) obj;
 
-        double diff = Math.abs(this.toFeet() - other.toFeet());
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
 
-        return diff < 0.0001;
+        return Math.abs(base1 - base2) < EPSILON;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(toFeet());
+        return Objects.hash(unit.convertToBaseUnit(value));
     }
 
     @Override
