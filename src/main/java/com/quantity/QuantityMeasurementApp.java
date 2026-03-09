@@ -1,27 +1,46 @@
 package com.quantity;
 
 public class QuantityMeasurementApp {
-	
-	public static void main(String[] args) {
+	public static void demonstrateEquality(Quantity<?> q1, Quantity<?> q2) {
 
-        // Length Example
-        QuantityLength length1 = new QuantityLength(1, LengthUnit.FEET);
-        QuantityLength length2 = new QuantityLength(12, LengthUnit.INCH);
-
-        System.out.println("1 ft == 12 inch : " + length1.equals(length2));
-
-        QuantityLength sum = length1.add(length2, LengthUnit.FEET);
-        System.out.println("Sum in feet : " + sum);
-
-
-        // Weight Example
-        QuantityWeight weight1 = new QuantityWeight(1, WeightUnit.KILOGRAM);
-        QuantityWeight weight2 = new QuantityWeight(1000, WeightUnit.GRAM);
-
-        System.out.println("1 kg == 1000 gram : " + weight1.equals(weight2));
-
-        QuantityWeight weightSum = weight1.add(weight2, WeightUnit.KILOGRAM);
-        System.out.println("Weight Sum : " + weightSum);
+        System.out.println(q1 + " == " + q2 + " : " + q1.equals(q2));
     }
+
+    public static <U extends IMeasurable> void demonstrateConversion(
+            Quantity<U> quantity, U targetUnit) {
+
+        System.out.println(quantity + " -> " + quantity.convertTo(targetUnit));
+    }
+
+    public static <U extends IMeasurable> void demonstrateAddition(
+            Quantity<U> q1, Quantity<U> q2, U resultUnit) {
+
+        System.out.println("Addition: " + q1.add(q2, resultUnit));
+    }
+
+    public static void main(String[] args) {
+
+        Quantity<LengthUnit> length1 =
+                new Quantity<>(1.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> length2 =
+                new Quantity<>(12.0, LengthUnit.INCHES);
+
+        demonstrateEquality(length1, length2);
+        demonstrateConversion(length1, LengthUnit.INCHES);
+        demonstrateAddition(length1, length2, LengthUnit.FEET);
+
+
+        Quantity<WeightUnit> weight1 =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+
+        Quantity<WeightUnit> weight2 =
+                new Quantity<>(1000.0, WeightUnit.GRAM);
+
+        demonstrateEquality(weight1, weight2);
+        demonstrateConversion(weight1, WeightUnit.GRAM);
+        demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
+    }
+	
 
 }
