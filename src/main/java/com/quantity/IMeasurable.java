@@ -1,8 +1,16 @@
 package com.quantity;
 
 public interface IMeasurable {
+	double convertToBaseUnit(double value);
 
-    double toBaseUnit(double value);
+    double convertFromBaseUnit(double baseValue);
 
-    double fromBaseUnit(double value);
-}
+    default boolean supportsArithmetic() {
+        SupportsArithmetic supportsArithmetic = () -> true;
+        return supportsArithmetic.isSupported();
+    }
+
+    default void validateOperationSupport(String operation) {
+        
+    }
+} 
