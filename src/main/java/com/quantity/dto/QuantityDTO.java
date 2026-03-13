@@ -2,14 +2,12 @@ package com.quantity.dto;
 
 public class QuantityDTO {
 
-    private double value;
+	private double value;
     private String unit;
-    private String measurement;
 
-    public QuantityDTO(double value, String unit, String measurement) {
+    public QuantityDTO(double value, String unit) {
         this.value = value;
         this.unit = unit;
-        this.measurement = measurement;
     }
 
     public double getValue() {
@@ -20,7 +18,11 @@ public class QuantityDTO {
         return unit;
     }
 
-    public String getMeasurement() {
-        return measurement;
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

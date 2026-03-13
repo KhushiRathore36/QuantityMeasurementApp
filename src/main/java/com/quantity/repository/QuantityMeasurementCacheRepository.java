@@ -7,7 +7,7 @@ import java.util.List;
 public class QuantityMeasurementCacheRepository
         implements IQuantityMeasurementRepository {
 
-    private static QuantityMeasurementCacheRepository instance;
+	private static QuantityMeasurementCacheRepository instance;
 
     private List<QuantityMeasurementEntity> cache = new ArrayList<>();
 
@@ -15,9 +15,8 @@ public class QuantityMeasurementCacheRepository
 
     public static QuantityMeasurementCacheRepository getInstance() {
 
-        if (instance == null) {
+        if(instance == null)
             instance = new QuantityMeasurementCacheRepository();
-        }
 
         return instance;
     }

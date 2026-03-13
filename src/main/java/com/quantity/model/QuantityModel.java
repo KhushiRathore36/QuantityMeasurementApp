@@ -4,7 +4,7 @@ import com.quantity.IMeasurable;
 
 public class QuantityModel<U extends IMeasurable> {
 
-    private double value;
+	private double value;
     private U unit;
 
     public QuantityModel(double value, U unit) {

@@ -7,32 +7,34 @@ import com.quantity.repository.IQuantityMeasurementRepository;
 public class QuantityMeasurementServiceImpl
         implements IQuantityMeasurementService {
 
-    private final IQuantityMeasurementRepository repository;
+	private IQuantityMeasurementRepository repo;
 
-    public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository) {
-        this.repository = repository;
+    public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public QuantityDTO convert(QuantityDTO quantity, String targetUnit) {
+    private double toInch(QuantityDTO q) {
 
-        repository.save(
-                new QuantityMeasurementEntity("CONVERT",
-                        quantity.getValue() + " " + quantity.getUnit())
-        );
+        if(q.getUnit().equalsIgnoreCase("FEET")) {
+            return q.getValue()*12;
+        }
 
-        return new QuantityDTO(quantity.getValue(), targetUnit,
-                quantity.getMeasurement());
+        return q.getValue();
     }
 
     @Override
     public boolean compare(QuantityDTO q1, QuantityDTO q2) {
 
-        boolean result = q1.getValue() == q2.getValue();
+        double v1 = toInch(q1);
+        double v2 = toInch(q2);
 
-        repository.save(
-                new QuantityMeasurementEntity("COMPARE", String.valueOf(result))
-        );
+        boolean result = v1 == v2;
+
+        repo.save(new QuantityMeasurementEntity(
+                "COMPARE",
+                q1.getValue()+" "+q1.getUnit(),
+                q2.getValue()+" "+q2.getUnit(),
+                String.valueOf(result)));
 
         return result;
     }
@@ -40,39 +42,62 @@ public class QuantityMeasurementServiceImpl
     @Override
     public QuantityDTO add(QuantityDTO q1, QuantityDTO q2) {
 
-        double result = q1.getValue() + q2.getValue();
+        double result = toInch(q1) + toInch(q2);
 
-        repository.save(
-                new QuantityMeasurementEntity("ADD", String.valueOf(result))
-        );
+        repo.save(new QuantityMeasurementEntity(
+                "ADD",
+                q1.getValue()+" "+q1.getUnit(),
+                q2.getValue()+" "+q2.getUnit(),
+                result+" INCH"));
 
-        return new QuantityDTO(result, q1.getUnit(), q1.getMeasurement());
+        return new QuantityDTO(result,"INCH");
     }
 
     @Override
     public QuantityDTO subtract(QuantityDTO q1, QuantityDTO q2) {
 
-        double result = q1.getValue() - q2.getValue();
+        double result = toInch(q1) - toInch(q2);
 
-        repository.save(
-                new QuantityMeasurementEntity("SUBTRACT", String.valueOf(result))
-        );
+        repo.save(new QuantityMeasurementEntity(
+                "SUBTRACT",
+                q1.getValue()+" "+q1.getUnit(),
+                q2.getValue()+" "+q2.getUnit(),
+                result+" INCH"));
 
-        return new QuantityDTO(result, q1.getUnit(), q1.getMeasurement());
+        return new QuantityDTO(result,"INCH");
     }
 
     @Override
     public double divide(QuantityDTO q1, QuantityDTO q2) {
 
-        if (q2.getValue() == 0)
-            throw new ArithmeticException("Division by zero");
+        double result = toInch(q1) / toInch(q2);
 
-        double result = q1.getValue() / q2.getValue();
-
-        repository.save(
-                new QuantityMeasurementEntity("DIVIDE", String.valueOf(result))
-        );
+        repo.save(new QuantityMeasurementEntity(
+                "DIVIDE",
+                q1.getValue()+" "+q1.getUnit(),
+                q2.getValue()+" "+q2.getUnit(),
+                String.valueOf(result)));
 
         return result;
+    }
+
+    @Override
+    public QuantityDTO convert(QuantityDTO q, String target) {
+
+        double inch = toInch(q);
+
+        double result = inch;
+
+        if(target.equalsIgnoreCase("FEET")) {
+            result = inch/12;
+        }
+
+        repo.save(new QuantityMeasurementEntity(
+                "CONVERT",
+                q.getValue()+" "+q.getUnit(),
+                target,
+                result+" "+target));
+
+        return new QuantityDTO(result,target);
     }
 }
