@@ -1,17 +1,31 @@
+
 package com.quantity.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class ConnectionPool {
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() {
 
-        return DriverManager.getConnection(
-                "jdbc:h2:mem:testdb",
-                "sa",
-                ""
-        );
+        Connection conn=null;
+
+        try{
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            conn=DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/quantityDB",
+                    "root",
+                    "Kr02032003");
+
+            System.out.println("Database Connected");
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return conn;
     }
 }
