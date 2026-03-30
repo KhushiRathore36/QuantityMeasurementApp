@@ -31,12 +31,12 @@ public class AuthController {
     @PostMapping("/signup")
     public String signup(@RequestBody User user) {
 
-       
+        // check if user already exists
         if (repo.findByUsername(user.getUsername()).isPresent()) {
             return "User already exists";
         }
 
-        
+        // encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         repo.save(user);
@@ -44,7 +44,7 @@ public class AuthController {
         return "User registered successfully";
     }
 
-   
+    
     @PostMapping("/login")
     public String login(@RequestBody User request) {
 

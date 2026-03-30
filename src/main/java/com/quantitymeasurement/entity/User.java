@@ -3,7 +3,7 @@ package com.quantitymeasurement.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users") 
+@Table(name = "users")
 public class User {
 
     @Id
@@ -13,6 +13,7 @@ public class User {
     private String username;
     private String password;
 
+    // getters setters
     public String getUsername() {
         return username;
     }
@@ -21,7 +22,7 @@ public class User {
         return password;
     }
 
-   
+    // ✅ SETTERS
     public void setUsername(String username) {
         this.username = username;
     }

@@ -62,4 +62,8 @@ public class QuantityMeasurementController {
     public long getCount(@PathVariable String operation) {
         return service.getOperationCount(operation);
     }
+    @GetMapping("/test")
+    public String testApi() {
+        return "This is secured API";
+    }
 }
