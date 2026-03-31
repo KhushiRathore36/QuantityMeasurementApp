@@ -190,5 +190,5 @@ H2 In-Memory Database
 
 👨‍💻 Author
 
-Devansh Kumar
+&#x20;Khushi Rathore
 
