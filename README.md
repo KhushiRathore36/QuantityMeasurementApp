@@ -132,7 +132,7 @@ Steps
 
 \# Clone the repo
 
-git clone https://github.com/Devansh-Kumar07/QuantityMeasurementApp.git
+git clone https://github.com/KhushiRathore36/QuantityMeasurementApp
 
 
 
