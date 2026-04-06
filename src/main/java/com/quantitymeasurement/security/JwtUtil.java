@@ -1,33 +1,32 @@
 package com.quantitymeasurement.security;
 
-import java.security.Key;
-import java.util.Date;
-
-import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mysecretkeymysecretkeymysecretkey"; // 32+ chars
+    @Value("${jwt.secret}")
+    private String secret;
 
     private Key getSignKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // Generate Token
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24)) // 24 hours
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Extract Username
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
@@ -37,9 +36,12 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    // Validate Token
     public boolean validateToken(String token, String username) {
-        String extracted = extractUsername(token);
-        return extracted.equals(username);
+        try {
+            String extracted = extractUsername(token);
+            return extracted.equals(username);
+        } catch (JwtException e) {
+            return false; // expired ya invalid token
+        }
     }
 }

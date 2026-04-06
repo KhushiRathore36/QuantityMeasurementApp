@@ -1,12 +1,11 @@
 package com.quantitymeasurement.security;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.*;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,24 +18,28 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Autowired
-    private OAuth2SuccessHandler oAuth2SuccessHandler; // NEW
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // OAuth2 ke liye zaruri
+            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/oauth2/**").permitAll() // UPDATED
+                .requestMatchers(
+                    "/auth/**",
+                    "/oauth2/**",
+                    "/login/oauth2/**"   // ← YEH ADD KARO — Google callback yahan aata hai
+                ).permitAll()
                 .anyRequest().authenticated()
             )
-
-            // ✅ ADD THIS BLOCK
             .oauth2Login(oauth -> oauth
-                .successHandler(oAuth2SuccessHandler) // VERY IMPORTANT
+                .successHandler(oAuth2SuccessHandler)
             );
 
-        // ✅ KEEP YOUR JWT FILTER
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
