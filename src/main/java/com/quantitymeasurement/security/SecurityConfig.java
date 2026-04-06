@@ -18,16 +18,25 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler; // NEW
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**", "/oauth2/**").permitAll() // UPDATED
                 .anyRequest().authenticated()
+            )
+
+            // ✅ ADD THIS BLOCK
+            .oauth2Login(oauth -> oauth
+                .successHandler(oAuth2SuccessHandler) // VERY IMPORTANT
             );
 
+        // ✅ KEEP YOUR JWT FILTER
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -38,7 +47,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    //PASSWORD ENCODER
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
