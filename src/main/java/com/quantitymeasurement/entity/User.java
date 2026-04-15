@@ -22,7 +22,7 @@ public class User {
         return password;
     }
 
-    // ✅ SETTERS
+    // SETTERS
     public void setUsername(String username) {
         this.username = username;
     }

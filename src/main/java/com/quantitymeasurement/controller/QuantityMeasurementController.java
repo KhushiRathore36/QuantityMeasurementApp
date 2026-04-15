@@ -16,6 +16,10 @@ public class QuantityMeasurementController {
 	@Autowired
     private IQuantityMeasurementService service;
 
+	@GetMapping("/")
+	public String getCheck() {
+		return "Server run sucessfully";
+	}
     // COMPARE
     @PostMapping("/compare")
     public QuantityMeasurementEntity compare(@RequestBody QuantityInputDTO input) {
