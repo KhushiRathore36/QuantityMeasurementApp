@@ -1,0 +1,88 @@
+#server:
+#  port: 8080
+#
+#spring:
+#  application:
+#    name: api-gateway
+#
+#  cloud:
+#    gateway:
+#      globalcors:
+#        add-to-simple-url-handler-mapping: true
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins:
+#              - "http://localhost:4200"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#              - OPTIONS
+#            allowedHeaders:
+#              - "*"
+#            allowCredentials: true
+#
+#      routes:
+#        - id: user-service
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/auth/**
+#
+#        - id: quantity-service
+#          uri: lb://quantity-service
+#          predicates:
+#            - Path=/api/v1/quantities/**
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+      routes:
+        # USER SERVICE AUTH (already tha)
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/auth/**
+
+        # ADD THIS (OAuth routes)
+        - id: user-service-oauth
+          uri: lb://user-service
+          predicates:
+            - Path=/oauth2/**, /login/oauth2/**
+
+        # QUANTITY SERVICE
+        - id: quantity-service
+          uri: lb://quantity-service
+          predicates:
+            - Path=/api/v1/quantities/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
